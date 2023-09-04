@@ -1,4 +1,4 @@
 streamlit
 mongodbclient
 sqlclient
-#googleservices
+google-api-python-client
