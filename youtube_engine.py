@@ -203,7 +203,7 @@ def get_video_info(youtube_object, video_ids):
     return all_video_info
 
 # Example usage
-video_info = get_video_info(youtube_object, video_ids)
+#video_info = get_video_info(youtube_object, video_ids)
 
 def get_comments(youtube_object, video_ids):
     """
@@ -309,7 +309,7 @@ def data(channel_id, Api_key):
     video_info=get_video_info(youtube_object=youtube_object,video_ids=video_ids)
     comments_and_replies=get_comments(youtube_object=youtube_object,video_ids=video_ids)
     
-    data=[channel_data,comments_and_replies,video_info]
+    data=[channel_data,video_info,comments_and_replies]
     
     return data
 
