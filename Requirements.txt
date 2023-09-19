@@ -2,3 +2,4 @@ streamlit
 mongodbclient
 sqlclient
 google-api-python-client
+re

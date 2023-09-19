@@ -1,6 +1,6 @@
 from apiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+import re
 
 #Generated API key from Google Api Services
 API_KEY = "AIzaSyDeazLgd1T6hUwdvraWC6BKv5L1bpB_pgU"
@@ -126,8 +126,35 @@ def get_video_ids(youtube_object, playlist_Id):
 #video_ids=get_video_ids(youtube_object=youtube_object,playlist_Id=playlist_id)
 
 
-def get_video_info(youtube_object, video_ids):
 
+
+#video_info=get_video_info(youtube_object=youtube_object,video_ids=video_ids)
+
+
+
+def extract_duration_minutes_seconds(duration):
+    """
+    function description: 
+    This func takes parameter and converts it 
+    in to the desired string format.
+    
+    params:
+    1. duration
+
+    result:
+    func returns the string in minutes and seconds.
+    """
+
+    match = re.search(r'(\d+)M(\d+)S', duration)
+    if match:
+        minutes = int(match.group(1))
+        seconds = int(match.group(2))
+        return f"{minutes} minutes {seconds} seconds"
+    else:
+        return None
+
+def get_video_info(youtube_object, video_ids):
+    
     """
     function description:
     This function defined to fetch 
@@ -144,31 +171,39 @@ def get_video_info(youtube_object, video_ids):
     
     """
     all_video_info = []
+    
     for i in range(0, len(video_ids), 50):
         request = youtube_object.videos().list(
-             part="snippet,contentDetails,statistics",
-             id=','.join(video_ids[i:i+50])
-             )
+            part="snippet,contentDetails,statistics",
+            id=','.join(video_ids[i:i+50])
+        )
         response = request.execute()
+        
         for item in response['items']:
-             extracted_data = {'snippet': ['channelTitle', 'description', 'publishedAt'],
-                             'statistics': ['viewCount', 'likeCount', 'commentCount'],
-                             'contentDetails': ['duration']
-                              }
-             video_info = {}
-             video_info['video_id'] = item['id']
-             for key in extracted_data.keys():
-                 for value in extracted_data[key]:
-                     try:
-                        video_info[value] = item[key][value]
-                     except:
+            extracted_data = {
+                'snippet': ['channelTitle', 'description', 'publishedAt'],
+                'statistics': ['viewCount', 'likeCount', 'commentCount'],
+                'contentDetails': ['duration']
+            }
+            video_info = {}
+            video_info['video_id'] = item['id']
+            
+            for key in extracted_data.keys():
+                for value in extracted_data[key]:
+                    try:
+                        if key == 'contentDetails' and value == 'duration':
+                            video_info[value] = extract_duration_minutes_seconds(item[key][value])
+                        else:
+                            video_info[value] = item[key][value]
+                    except:
                         video_info[value] = None
-             all_video_info.append(video_info) 
+            
+            all_video_info.append(video_info)
+    
     return all_video_info
 
-#video_info=get_video_info(youtube_object=youtube_object,video_ids=video_ids)
-
-
+# Example usage
+video_info = get_video_info(youtube_object, video_ids)
 
 def get_comments(youtube_object, video_ids):
     """
@@ -274,7 +309,7 @@ def data(channel_id, Api_key):
     video_info=get_video_info(youtube_object=youtube_object,video_ids=video_ids)
     comments_and_replies=get_comments(youtube_object=youtube_object,video_ids=video_ids)
     
-    data=[channel_data,video_info,comments_and_replies]
+    data=[channel_data,comments_and_replies,video_info]
     
     return data
 
