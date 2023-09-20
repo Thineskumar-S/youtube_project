@@ -232,16 +232,10 @@ def get_comments(youtube_object, video_ids):
             comments_and_replies = []
             
             for item in response['items']:
-                if  item['snippet']['topLevelComment']['snippet']['textOriginal']=True:
-                    extract_data_comments = {'video_id': video_id, 
-                                             'comment': item['snippet']['topLevelComment']['snippet']['textOriginal'],
-                                             'comment_likes': item['snippet']['topLevelComment']['snippet']['likeCount']
-                                             }
-                else:
-                    extract_data_comments = {'video_id': video_id, 
-                                             'comment': 'no comments / Comments disabled',
-                                             'comment_likes': 0
-                                             }
+                extract_data_comments = {'video_id': video_id, 
+                                         'comment': item['snippet']['topLevelComment']['snippet']['textOriginal'],
+                                         'comment_likes': item['snippet']['topLevelComment']['snippet']['likeCount']
+                                           }
 
                 no_of_replies = item['snippet']['totalReplyCount']
                 extracted_replies = []

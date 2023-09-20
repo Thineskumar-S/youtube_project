@@ -1,5 +1,6 @@
 streamlit
-mongodbclient
-sqlclient
+pymongo
+mysql-connector-python
 google-api-python-client
+googleapiclient.errors import HttpError
 re
