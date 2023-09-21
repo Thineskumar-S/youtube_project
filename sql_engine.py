@@ -1,6 +1,8 @@
 import mysql.connector
 from youtube_engine import get_channel_info
 from mongodb_engine import *
+import pandas as pd 
+
 connection_string='youtubeproject.cwoakibr9oeh.ap-south-1.rds.amazonaws.com'
 user_name=ThineshKumar
 password='ThiKum10203040!'
@@ -11,24 +13,30 @@ connection_object = mysql.connector.connect(
   password=password)
 
 cursor_object=connection_object.curosr()
-cursor_object.execute()
 
-
-def channel_checker():
+#1st part channel_name in sql 
+#user input from streamlit 
+def channel_checker(channel_id):
      
      channel_data=get_channel_info(youtube_object=youtube_object,channel_id=channel_id)
      channel_name=channel_data[0]['Channel_Name']
-     cursor_object.execute("show databases")
-     databases=cursor_object.fetchall()
-     connection_object.close()
 
+     list_of_channels
+
+     cursor_object.execute("use youtube_project")
+     cursor_object.commit()
+     cursor_object.execute('select Channel_Name from channel_info')
+     databases=cursor_object.fetchall()
+     
      if channel_name in  databases:
+          #streamlit output
           print('The channel is present in the data warehouse!')
 
      else:
+          #streamlit output
           print('click to load to data lake ')
           load()
-
+# button to click on to load from warehouse to sql through streamlit
 def transfer_to_sql():
      a_,b_,c_=extract_from_mongodb()
      channel_name=a['channel_name']
@@ -81,24 +89,20 @@ def transfer_to_sql():
           connection_object.commit()
 
 
-
-
-
-
-
-
-
-
 # 2part
 def list_of_channels():
      cursor_object.execute("select Channel_name from Channel_data")
      list_of_channels=cursor_object.fetchall()
-     connection_object.close()
-     return list_of_channels
+     channel_list=list_of_channels()
+     df=pd.Dataframe(channel_list)
+     return df
 
 
 
 
+
+
+"""  
 
 #3rd part
 def question1():
@@ -106,8 +110,4 @@ def question1():
 def q2():
      pass
 
-
-
-
-    
-   
+"""
