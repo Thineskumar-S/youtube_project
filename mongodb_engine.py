@@ -6,12 +6,18 @@ from youtube_engine import data
 
 # obtain the connection string from the server to connect via python
 
-client = pymongo.MongoClient("mongodb+srv://thineshkumar:Thinesh1234@practicecluster.kddvjwc.mongodb.net/")
+"""
+connection_string="mongodb+srv://thineshkumar:Thinesh1234@practicecluster.kddvjwc.mongodb.net/"
+client = pymongo.MongoClient(connection_string)
+"""
 
-
-def load():
-    result = data(channel_id=channnel_id, Api_key=Api_key)
-    channel_name = result[0]['Channel_Name']
+def load(channel_id,client):
+    channel_id=channel_id
+    result = data(channel_id)
+    channel_name = result[0][0]['Channel_Name']
+    channel_name=channel_name.split(' ')
+    channel_name='_'.join(channel_name)
+    client=client
     db=client[channel_name]
     
     
@@ -68,17 +74,25 @@ def load():
     return 'The data is loaded in to the mongo db'
 
 
-
-def extract_from_mongodb():
-
-    channel_name='?'
+def extract_from_mongodb(channel_name,client):
+    a=[]
+    b=[]
+    c=[]
+    channel_name=channel_name
+    client = client
     db=client[channel_name]
     collection=db['channel_info']
-    a=collection.find()
+    channel_info=collection.find()
+    for channel in channel_info:
+        a.append(channel)
     collection=db['video_info']
-    b=collection.find_all()
+    video_info=collection.find()
+    for video in video_info :
+        b.append(video)
     collection=db['comments']
-    c=collection.find_all()
+    comments=collection.find()
+    for comment in comments:
+        c.append(comment)
     return [a,b,c]
 
 

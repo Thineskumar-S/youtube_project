@@ -4,3 +4,4 @@ mysql-connector-python
 google-api-python-client
 googleapiclient.errors import HttpError
 re
+pandas 

@@ -1,59 +1,90 @@
 import streamlit as st
+import mysql.connector
 from youtube_engine import get_channel_info
 from mongodb_engine import load
 from sql_engine import *
-#App Title
-st.title(":red[Youtube] Channel Analytics ")
-
-st.write("Enter the Youtube Channel id")
-# inputting url
-
-with st.form(key='my_form'):
-      
-	text_input = st.text_input(label="Paste the channel Id here")
-	submit_button = st.form_submit_button(label=':blue[Submit]')
-
-#extraction message
-if submit_button:
-    st.write('Fetching Channel information from Datalake')
-    st.success('Successfully updated', icon="✅")
+from apiclient.discovery import build
+import pymongo
+import time
 
 
-# Create a database connection
-conn = sqlite3.connect('my_database.db')
-cursor = conn.cursor()
+def run():
 
-# Create a table to store names if it doesn't exist
-cursor.execute('''CREATE TABLE IF NOT EXISTS names (name TEXT)''')
-conn.commit()
+    API_KEY = "AIzaSyDeazLgd1T6hUwdvraWC6BKv5L1bpB_pgU"
 
-# Streamlit app
-st.title("Name Checker and Adder")
+    YOUTUBE_API_SERVICE_NAME = "youtube"
+    YOUTUBE_API_VERSION = "v3"
 
-# Input for the name
-name = st.text_input("Enter a name:")
 
-# Check if the name exists in the database
-if name:
-    cursor.execute("SELECT name FROM names WHERE name=?", (name,))
-    result = cursor.fetchone()
+    # creating Youtube connection Object
+    youtube_object = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+                        developerKey = API_KEY)
     
-    if result:
-        st.write(f"The name '{name}' is already in the database.")
-    else:
-        st.write(f"The name '{name}' is not in the database.")
-        if st.button("Add to Database"):
-            cursor.execute("INSERT INTO names (name) VALUES (?)", (name,))
-            conn.commit()
-            st.success(f"'{name}' has been added to the database!")
+    connection_string='youtubeproject.cwoakibr9oeh.ap-south-1.rds.amazonaws.com'
+    user_name='ThineshKumar'
+    password='ThiKum10203040!'
 
-# Additional buttons and draggable element
-if st.button("Click Me!"):
-    st.write("You clicked the button!")
+    connection_object = mysql.connector.connect(
+    host=connection_string,
+    user=user_name,
+    password=password)
 
-if st.checkbox("Show Gimmick"):
-    st.write("This is a gimmick!")
+    cursor_object=connection_object.cursor()
+    cursor_object.execute("use youtube_project")
+    connection_object.commit()
 
-# Draggable element
-st.write("Drag this element:")
-draggable = st.slider("Draggable Slider", 0, 100, 50)
+    connection_string="mongodb+srv://thineshkumar:Thinesh1234@practicecluster.kddvjwc.mongodb.net/"
+    client = pymongo.MongoClient(connection_string)
+
+    #App Title
+    st.title(":red[Youtube] Channel Analytics ")
+
+        
+    channel_id = st.text_input(label="Enter/ Paste the channel Id here")
+    submit_button = st.button(label=':blue[Submit]')
+
+    #extraction message
+    if submit_button:
+        st.write('Fetching Channel information from Data warehouse')
+        channel_data=get_channel_info(channel_id)
+        channel_name=channel_data[0]['Channel_Name']   
+        cursor_object.execute('select Channel_Name from channel_info')
+        databases=cursor_object.fetchall()
+
+        
+        if channel_name in  databases:
+            #streamlit output
+            st.success('Successfully checked', icon="✅")
+            st.write(f"The Channel Name '{channel_name}' is already in the data warehouse.")
+        
+
+        else:
+            tab1, tab2,tab3 = st.tabs(["check","Load to Data Lake","From Data Lake to Data Warehouse"])
+
+            with st.container():
+                with tab1:
+                    st.write(f"The Channel Name '{channel_name}' is not in the database.")
+                    st.write("Automatically Adding to Data lake")
+                with tab2:
+                    with st.spinner ('Started to fetch for loading data in to Data Lake....'):
+                        st.write('')
+                        start_time = time.time()
+                        loaded=load(channel_id,client)
+                        end_time = time.time()
+                        final_time=end_time-start_time
+                        with st.expander("Update Info"):
+                            st.success('Successfully updated', icon="✅")
+                            st.write('Output from the loader function: ',loaded)
+                            st.write(f"Total time taken to run this process '{final_time}' ")
+                            st.success(f"'{channel_name}' has been added to the data lake !")
+                
+                with tab3:
+                    with st.spinner('fetching from Data Lake to load it in Data Warehouse'):
+                        st.write('')
+                        st.success('done !')
+                    
+
+                
+
+if __name__=='__main__':
+    run()

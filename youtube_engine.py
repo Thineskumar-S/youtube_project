@@ -14,11 +14,11 @@ youtube_object = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
                        developerKey = API_KEY)
 
 #obtain channel_id from the user via user's input
-channel_id="UCjWY5hREA6FFYrthD0rZNIw"
+#channel_id="UCjWY5hREA6FFYrthD0rZNIw"
 
 
 #get the channel info by this function.
-def get_channel_info(youtube_object,channel_id):
+def get_channel_info(channel_id):
     
     """
     function description:
@@ -34,6 +34,7 @@ def get_channel_info(youtube_object,channel_id):
     
     """
 
+    
     try:
         Channel_data=[]
         request = youtube_object.channels().list(
@@ -63,11 +64,11 @@ def get_channel_info(youtube_object,channel_id):
     return Channel_data
 
 #function calling to use the channel data variable for unpacking the playlist id
-channel_data=get_channel_info(youtube_object=youtube_object,channel_id=channel_id)
-playlist_id=channel_data[0]["playlsit_id"]
+#channel_data=get_channel_info(youtube_object=youtube_object,channel_id=channel_id)
+#playlist_id=channel_data[0]["playlsit_id"]
 
  
-def get_video_ids(youtube_object, playlist_Id):
+def get_video_ids(playlist_Id):
 
     """
     function description:
@@ -153,7 +154,7 @@ def extract_duration_minutes_seconds(duration):
     else:
         return None
 
-def get_video_info(youtube_object, video_ids):
+def get_video_info(video_ids):
     
     """
     function description:
@@ -205,7 +206,7 @@ def get_video_info(youtube_object, video_ids):
 # Example usage
 #video_info = get_video_info(youtube_object, video_ids)
 
-def get_comments(youtube_object, video_ids):
+def get_comments(video_ids):
     """
     function description:
     This function defined to fetch 
@@ -277,7 +278,8 @@ def get_comments(youtube_object, video_ids):
 
 #comments=get_comments(youtube_object=youtube_object,video_ids=video_ids)
 
-def data(channel_id, Api_key):
+def data(channel_id):
+
 
     """
     function description:
@@ -293,6 +295,7 @@ def data(channel_id, Api_key):
     the channel information, video information and comments& replies.
     
     """
+    """
     API_KEY = Api_key
     YOUTUBE_API_SERVICE_NAME = "youtube"
     YOUTUBE_API_VERSION = "v3"
@@ -302,12 +305,13 @@ def data(channel_id, Api_key):
     # obtain channel_id from the user via user's input
     
     channel_id=channel_id
-
-    channel_data=get_channel_info(youtube_object=youtube_object,channel_id=channel_id)
+    """
+    channel_id=channel_id
+    channel_data=get_channel_info(channel_id)
     playlist_id=channel_data[0]["playlsit_id"]
-    video_ids=get_video_ids(youtube_object=youtube_object,playlist_Id=playlist_id)
-    video_info=get_video_info(youtube_object=youtube_object,video_ids=video_ids)
-    comments_and_replies=get_comments(youtube_object=youtube_object,video_ids=video_ids)
+    video_ids=get_video_ids(playlist_id)
+    video_info=get_video_info(video_ids)
+    comments_and_replies=get_comments(video_ids)
     
     data=[channel_data,video_info,comments_and_replies]
     
