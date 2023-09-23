@@ -182,7 +182,7 @@ def get_video_info(video_ids):
         
         for item in response['items']:
             extracted_data = {
-                'snippet': ['channelTitle', 'description', 'publishedAt'],
+                'snippet': ['channelTitle', 'title','description', 'publishedAt'],
                 'statistics': ['viewCount', 'likeCount', 'commentCount'],
                 'contentDetails': ['duration']
             }

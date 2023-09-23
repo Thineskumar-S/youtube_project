@@ -82,7 +82,21 @@ def run():
                     with st.spinner('fetching from Data Lake to load it in Data Warehouse'):
                         st.write('')
                         st.success('done !')
-                    
+                        channel_name=channel_name.split(' ')
+                        channel_name='_'.join(channel_name)
+                        start_time = time.time()
+                        loaded=transfer_to_sql(channel_name,cursor_object,client,connection_object)
+                        end_time = time.time()
+                        final_time=end_time-start_time
+                        with st.expander("Update Info"):
+                            st.success('Successfully updated', icon="✅")
+                            st.write('Output from the loader function: ',loaded)
+                            st.write(f"Total time taken to run this process '{final_time}' ")
+                            st.success(f"'{channel_name}' has been added to the Data Warehouse !")
+    with st.container():
+            st.write('List of Channels in the Data Warehouse')
+            list_of_channel=list_of_channels(cursor_object)
+            st.table(list_of_channel)                    
 
                 
 
