@@ -1,11 +1,10 @@
-import mysql.connector
+#import mysql.connector
 from mongodb_engine import extract_from_mongodb
 import pandas as pd 
-#import numpy as np
 """
 connection_string='youtubeproject.cwoakibr9oeh.ap-south-1.rds.amazonaws.com'
 user_name='ThineshKumar'
-password='ThiKum10203040!'
+password='Thinesh1234'
 
 connection_object = mysql.connector.connect(
 host=connection_string,

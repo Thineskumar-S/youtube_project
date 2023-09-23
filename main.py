@@ -21,7 +21,7 @@ def run():
     
     connection_string='youtubeproject.cwoakibr9oeh.ap-south-1.rds.amazonaws.com'
     user_name='ThineshKumar'
-    password='ThiKum10203040!'
+    password='Thinesh1234'
 
     connection_object = mysql.connector.connect(
     host=connection_string,
