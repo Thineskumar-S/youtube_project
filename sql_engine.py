@@ -1,7 +1,7 @@
 import mysql.connector
 from mongodb_engine import extract_from_mongodb
 import pandas as pd 
-
+#import numpy as np
 """
 connection_string='youtubeproject.cwoakibr9oeh.ap-south-1.rds.amazonaws.com'
 user_name='ThineshKumar'
@@ -96,6 +96,7 @@ Query_lists=[
      "9. What is the average duration of all videos in each channel, and what are their corresponding channel names?",
      "10. Which videos have the highest number of comments, and what are their corresponding channel names?"
      ]
+#Query_lists=np.array(Query_lists)
 
 #3rd part
 def q1(cursor_object):
@@ -206,9 +207,7 @@ def query_outputs(cursor_object):
      output=[a,b,c,d,e,f,g,h,i,j]
      return output
 
-def dynamic_display(value,cursor_object):
-     cursor_object=cursor_object
-     output=query_outputs(cursor_object)
+def dynamic_display(value,output):
      if Query_lists[0]==value:
           return output[0]
      elif Query_lists[1]==value:

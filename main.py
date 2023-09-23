@@ -7,7 +7,6 @@ from apiclient.discovery import build
 import pymongo
 import time
 
-
 def run():
 
     API_KEY = "AIzaSyDeazLgd1T6hUwdvraWC6BKv5L1bpB_pgU"
@@ -36,8 +35,6 @@ def run():
     connection_string="mongodb+srv://thineshkumar:Thinesh1234@practicecluster.kddvjwc.mongodb.net/"
     client = pymongo.MongoClient(connection_string)
 
-    #query output for faster execution:
-    query_output=query_outputs(cursor_object)
     #App Title
     st.title(":red[Youtube] Channel Analytics ")
 
@@ -99,21 +96,18 @@ def run():
             st.write('List of Channels in the Data Warehouse')
             list_of_channel=list_of_channels(cursor_object)
             st.table(list_of_channel) 
-
-    with container():
+    
+    #query output for faster execution:
+    query_output=query_outputs(cursor_object)
+    with st.container():
         col1, col2 = st.columns(2)
-        list=[]
         with col1:
-            selected=st.radio(
-        "click on a button to view 👇",
-        Query_lists,
-        index=None)
-            list.append(selected)
-        user_opted=list[0]
+            option = st.selectbox("click on a button to view 👇",
+                              Query_lists,
+                              index=0,label_visibility="visible")
         with col2:
-            dynamic=dynamic_display(user_opted,query_output,cursor_object)
+            dynamic=dynamic_display(option,cursor_object)
             st.table(dynamic)
-                
 
-if __name__=='__main__':
+if __name__ == '__main__':
     run()
