@@ -84,56 +84,39 @@ def list_of_channels(cursor_object):
      df=pd.DataFrame(list_of_channels,columns=['List of channels',] )
      return df
 
-
-"""
-query Output need to displayed as table in Streamlit Application:
-
-How many comments were made on each video, and what are their
- corresponding video names?
-Which videos have the highest number of likes, and what are their 
-corresponding channel names?
-What is the total number of likes and dislikes for each video, and what are 
-their corresponding video names?
-What is the total number of views for each channel, and what are their 
-corresponding channel names?
-What are the names of all the channels that have published videos in the year
- 2022?
-What is the average duration of all videos in each channel, and what are their 
-corresponding channel names?
-Which videos have the highest number of comments, and what are their 
-corresponding channel names?
-
-
-
-"""
-
-
-
-
-
-
+Query_lists=[
+     "1. What are the names of all the videos and their corresponding channels?",
+     "2. Which channels have the most number of videos, and how many videos do they have?",
+     "3. What are the top 10 most viewed videos and their respective channels?",
+     "4. How many comments were made on each video, and what are their corresponding video names?",
+     "5. Which videos have the highest number of likes, and what are their corresponding channel names?",
+     "6. What is the total number of likes for the channel in the video",
+     "7. What is the total number of views for each channel, and what are their corresponding channel names?",
+     "8. What are the names of all the channels that have published videos in the year 2022?",
+     "9. What is the average duration of all videos in each channel, and what are their corresponding channel names?",
+     "10. Which videos have the highest number of comments, and what are their corresponding channel names?"
+     ]
 
 #3rd part
 def q1(cursor_object):
      # What are the names of all the videos and their corresponding channels?
      #must use join
-     cursor_object.execute('select video_Title, from video_info')
+     cursor_object.execute('select channel_Title,video_Title from video_info limit 20')
      video_titles=cursor_object.fetchall()
      df=pd.DataFrame(video_titles)
      return df
           
 def q2(cursor_object):
      # Which channels have the most number of videos, and how many videos do they have?
-     cursor_object.execute('select Channel_Name, videos from channel_info where max(videos)')
+     cursor_object.execute('select channel_Name, videos as Maximum_videos from channel_info order by channel_Name desc limit 1')
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
      return df
 
 def q3(cursor_object):
      
-     #What are the top 10 most viewed videos and their respective channels?
-     #join
-     cursor_object.execute('select video_id,channel_Title,viewCount,chanel_Name from video_info order by viewCount limit 10')
+     # What are the top 10 most viewed videos and their respective channels?
+     cursor_object.execute('select channel_Title,video_Title,viewCount from video_info order by viewCount desc limit 10')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
@@ -142,7 +125,8 @@ def q3(cursor_object):
 
 
 def q4(cursor_object):
-     cursor_object.execute('')
+     # How many comments were made on each video, and what are their corresponding video names?
+     cursor_object.execute('select video_Title, commentCount from video_info ')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
@@ -151,7 +135,8 @@ def q4(cursor_object):
 
 
 def q5(cursor_object):
-     cursor_object.execute('')
+     # Which videos have the highest number of likes, and what are their corresponding channel names?
+     cursor_object.execute('select video_title,likeCount from video_info order by likecount desc limit 1 ')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
@@ -160,7 +145,8 @@ def q5(cursor_object):
 
 
 def q6(cursor_object):
-     cursor_object.execute('')
+     # What is the total number of likes for the channel in the video
+     cursor_object.execute('select channel_Title as channel_name, sum(likeCount) Total_likes from video_info group by channel_Title ')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
@@ -168,7 +154,8 @@ def q6(cursor_object):
 
 
 def q7(cursor_object):
-     cursor_object.execute('')
+     # What is the total number of views for each channel, and what are their corresponding channel names?
+     cursor_object.execute(' select channel_Title as channel_name, sum(viewCount) as Total_views from video_info group by channel_Title')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
@@ -176,15 +163,20 @@ def q7(cursor_object):
 
 
 def q8(cursor_object):
-     cursor_object.execute('')
+     #  What are the names of all the channels that have published videos in the year 2022?
+     #might use regexp
+     """
+     cursor_object.execute('select channel_title, publishedAt from video_info where publishedAt>2022 ')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
-     return df
+     """
+     return 'done'
 
 
 def q9(cursor_object):
-     cursor_object.execute('')
+     # What is the average duration of all videos in each channel, and what are their corresponding channel names?
+     cursor_object.execute('select channel_Title, avg(duration)from video_info group by channel_title ')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
@@ -192,8 +184,59 @@ def q9(cursor_object):
 
 
 def q10(cursor_object):
-     cursor_object.execute('')
+     # Which videos have the highest number of comments, and what are their corresponding channel names?
+     cursor_object.execute('select channel_Title,video_Title,commentcount from video_info order by commentCount desc limit 1')
      cursor_object.fetchall()
      x=cursor_object.fetchall()
      df=pd.DataFrame(x)
      return df
+
+def query_outputs(cursor_object):
+     cursor_object=cursor_object
+     a=q1(cursor_object)
+     b=q2(cursor_object)
+     c=q3(cursor_object)
+     d=q4(cursor_object)
+     e=q5(cursor_object)
+     f=q6(cursor_object)
+     g=q7(cursor_object)
+     h=q8(cursor_object)
+     i=q9(cursor_object)
+     j=q10(cursor_object)
+     output=[a,b,c,d,e,f,g,h,i,j]
+     return output
+
+def dynamic_display(value,cursor_object):
+     cursor_object=cursor_object
+     output=query_outputs(cursor_object)
+     if Query_lists[0]==value:
+          return output[0]
+     elif Query_lists[1]==value:
+          return output[1]
+     
+     elif Query_lists[2]==value:
+          return output[2]
+     
+     elif Query_lists[3]==value:
+          return output[3]
+     
+     elif Query_lists[4]==value:
+          return output[4]
+     
+     elif Query_lists[5]==value:
+          return output[5]
+     
+     elif Query_lists[6]==value:
+          return output[6]
+     
+     elif Query_lists[7]==value:
+          return output[7]
+     
+     elif Query_lists[8]==value:
+          return output[8]
+     
+     elif Query_lists[9]==value:
+          return output[9]
+     else:
+          return output[10]
+

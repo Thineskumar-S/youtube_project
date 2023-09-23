@@ -36,6 +36,8 @@ def run():
     connection_string="mongodb+srv://thineshkumar:Thinesh1234@practicecluster.kddvjwc.mongodb.net/"
     client = pymongo.MongoClient(connection_string)
 
+    #query output for faster execution:
+    query_output=query_outputs(cursor_object)
     #App Title
     st.title(":red[Youtube] Channel Analytics ")
 
@@ -96,8 +98,21 @@ def run():
     with st.container():
             st.write('List of Channels in the Data Warehouse')
             list_of_channel=list_of_channels(cursor_object)
-            st.table(list_of_channel)                    
+            st.table(list_of_channel) 
 
+    with container():
+        col1, col2 = st.columns(2)
+        list=[]
+        with col1:
+            selected=st.radio(
+        "click on a button to view 👇",
+        Query_lists,
+        index=None)
+            list.append(selected)
+        user_opted=list[0]
+        with col2:
+            dynamic=dynamic_display(user_opted,query_output,cursor_object)
+            st.table(dynamic)
                 
 
 if __name__=='__main__':
