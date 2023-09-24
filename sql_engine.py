@@ -80,8 +80,7 @@ def list_of_channels(cursor_object):
      cursor_object=cursor_object
      cursor_object.execute("select channel_name from channel_info")
      list_of_channels=cursor_object.fetchall()
-     df=pd.DataFrame(list_of_channels,columns=['List of channels',] )
-     return df
+     return list_of_channels
 
 Query_lists=[
      "1. What are the names of all the videos and their corresponding channels?",

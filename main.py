@@ -6,6 +6,7 @@ from sql_engine import *
 from apiclient.discovery import build
 import pymongo
 import time
+import pandas as pd
 
 def run():
 
@@ -92,12 +93,23 @@ def run():
                             st.write('Output from the loader function: ',loaded)
                             st.write(f"Total time taken to run this process '{final_time}' ")
                             st.success(f"'{channel_name}' has been added to the Data Warehouse !")
-    with st.container():
-            st.write('List of Channels in the Data Warehouse')
-            list_of_channel=list_of_channels(cursor_object)
-            st.table(list_of_channel) 
     
+    st.header("List of channels in the Data Warehouse", divider='rainbow')
+    with st.container():
+            col1,col2=st.columns(2)
+            with col1:
+                list_of_channel=list_of_channels(cursor_object)
+                opted=st.radio("choose the channel to view individual channel data",list_of_channel,index=0)
+            with col2:
+                query='select * from channel_info where channel_name =%s'
+                cursor_object.execute(query,(opted,))
+                dynamic_info=cursor_object.fetchall()
+                df=pd.DataFrame(dynamic_info)
+                st.table(df) 
+        
     #query output for faster execution:
+    
+    st.header("Analtical queries and results ", divider='rainbow')
     query_output=query_outputs(cursor_object)
     with st.container():
         col1, col2 = st.columns(2)
@@ -106,7 +118,7 @@ def run():
                               Query_lists,
                               index=0,label_visibility="visible")
         with col2:
-            dynamic=dynamic_display(option,cursor_object)
+            dynamic=dynamic_display(option,query_output)
             st.table(dynamic)
 
 if __name__ == '__main__':
