@@ -12,6 +12,15 @@ client = pymongo.MongoClient(connection_string)
 """
 
 def load(channel_id,client):
+
+    """
+    Inputs data to the mongo db.
+
+    returns: the string as data loaded iside the mongodb.
+    """
+
+
+
     channel_id=channel_id
     result = data(channel_id)
     channel_name = result[0][0]['Channel_Name']
@@ -75,6 +84,14 @@ def load(channel_id,client):
 
 
 def extract_from_mongodb(channel_name,client):
+    """
+      Extracting data from the mongo db
+
+      returns: channel, video info and comment.
+      
+      """
+
+
     a=[]
     b=[]
     c=[]
