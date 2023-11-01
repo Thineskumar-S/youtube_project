@@ -37,6 +37,10 @@ def run():
     client = pymongo.MongoClient(connection_string)
 
     #App Title
+
+    st.set_page_config(page_title="Youtube Analytics", page_icon='📶', layout="centered")
+
+
     st.title(':red[Youtube] Channel Analytics')
     st.header(' ')
     with st.container():   
